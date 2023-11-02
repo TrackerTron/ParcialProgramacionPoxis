@@ -15,6 +15,22 @@
     <input type="password" name="password" placeholder="Contraseña">
 
     <input type="submit" value="Registrar">
+
+  <div>
+
+  <h1>Login</h1>
+ 
+  
+  <form action="{{ route('login') }}" method="post">
+  @csrf
+  <input type="email" name="email" placeholder="Correo electrónico">
+  <input type="password" name="password" placeholder="Contraseña">
+
+  <input type="submit" value="login">
+
+  </div>
+
+
   </form>
 </body>
 </html>

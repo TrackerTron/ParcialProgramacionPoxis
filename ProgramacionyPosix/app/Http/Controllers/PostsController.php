@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -20,4 +20,20 @@ class PostsController extends Controller
 
         return redirect("/");
     }
+
+
+
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+        
+        if (Auth::attempt($credentials)) {
+            // La autenticación fue exitosa
+            return redirect("/");
+        } else {
+            // Autenticación fallida
+            return back()->with('error', 'Credenciales incorrectas');
+        }
+    }
+
 }

@@ -9,3 +9,4 @@ Route::get('/', function () {
 
 Route::post('/register', [PostsController::class,"register"])->name("register");
 
+Route::post('/login', [PostsController::class,"login"])->name("login");
