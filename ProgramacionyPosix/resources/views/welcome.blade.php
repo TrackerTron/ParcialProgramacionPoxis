@@ -16,21 +16,16 @@
 
     <input type="submit" value="Registrar">
 
-  <div>
+      </form>
+<div></div>
 
-  <h1>Login</h1>
- 
-  
-  <form action="{{ route('login') }}" method="post">
-  @csrf
-  <input type="email" name="email" placeholder="Correo electrónico">
-  <input type="password" name="password" placeholder="Contraseña">
+<br>
 
-  <input type="submit" value="login">
-
-  </div>
+<a href="{{ route('login') }}">
+    <button>Acceder al login</button>
+</a>
 
 
-  </form>
+
 </body>
 </html>

@@ -9,4 +9,9 @@ Route::get('/', function () {
 
 Route::post('/register', [PostsController::class,"register"])->name("register");
 
-Route::post('/login', [PostsController::class,"login"])->name("login");
+
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
+
+Route::post('/login', [PostsController::class, 'login']); // Ruta para procesar el inicio de sesión
