@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Http\Request;
 use App\Models\User;
 
@@ -28,7 +27,7 @@ class PostsController extends Controller
         if (Auth::attempt($credentials)) {
             return redirect('/');
         } else {
-            return back()->with('error', 'Credenciales incorrectas');
+            return redirect()->route('error');
         }
     }
 

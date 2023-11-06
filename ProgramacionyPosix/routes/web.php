@@ -15,3 +15,7 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::post('/login', [PostsController::class, 'login']); // Ruta para procesar el inicio de sesión
+
+Route::get('/error', function () {
+    return view('error');
+})->name('error');
