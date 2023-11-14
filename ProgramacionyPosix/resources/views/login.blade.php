@@ -8,7 +8,7 @@
 <h1>Inicio de Sesión</h1>
 
 <form action="{{ route('login') }}" method="post">
-    @csrf
+      @csrf
 
     <input type="email" name="email" placeholder="Correo electrónico" required>
     <input type="password" name="password" placeholder="Contraseña">

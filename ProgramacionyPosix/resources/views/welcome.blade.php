@@ -7,8 +7,8 @@
 <body>
   <h1>Registro</h1>
 
-  <form action="{{ route('register') }}" method="post">
-    @csrf
+  <form action="{{ route('login') }}" method="post">
+        @csrf
 
     <input type="text" name="name" placeholder="Nombre de usuario">
     <input type="email" name="email" placeholder="Correo electrónico">
@@ -24,8 +24,5 @@
 <a href="{{ route('login') }}">
     <button>Acceder al login</button>
 </a>
-
-
-
 </body>
 </html>
