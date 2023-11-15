@@ -8,7 +8,12 @@ use Illuminate\Http\Request;
 class TaskController extends Controller {
 
     public function index() {
-        return Task::all();
+        $tasks = Task::paginate(10);     
+        return response()->json([
+            'tasks' => $tasks->items(),
+            'current_page' => $tasks->currentPage(),
+            'total' => $tasks->total(),
+        ]);
     }
 
     public function show(Task $task) {
@@ -16,11 +21,19 @@ class TaskController extends Controller {
     }
 
     public function store(Request $request) {
-
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'author_id' => 'required|exists:authors,id',
+            'state_id' => 'required|exists:states,id',
+            'text_file' => 'file|mimes:txt,pdf|max:10240', 
+        ]);
+    
         $task = Task::create($request->only(['title', 'description', 'author_id', 'state_id']));
-
+    
         $task->author_id = auth()->user()->id;
         $task->save();
+        
         return response()->json($task, 201);
     }
 
