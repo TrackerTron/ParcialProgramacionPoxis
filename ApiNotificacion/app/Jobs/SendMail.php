@@ -16,14 +16,20 @@ class SendMail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    private $from;
+    private $to;
+    private $subject;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($from, $subject, $to)
     {
-        //
+        $this -> from = $from;
+        $this -> to = $to;
+        $this -> subject = $subject;
     }
 
     /**
@@ -33,6 +39,7 @@ class SendMail implements ShouldQueue
      */
     public function handle()
     {
-        //
+        $correo = new WelcomeUser($this -> from, $this -> subject);
+        Mail::to($this -> to)->send($correo);
     }
 }
