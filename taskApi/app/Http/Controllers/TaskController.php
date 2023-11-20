@@ -16,34 +16,38 @@ class TaskController extends Controller {
         ]);
     }
 
-    public function show(Task $task) {
+    public function show(Request $request, $id){
+        return $task = Task::FindOrFail($id);
+    }
+
+    public function store(Request $request){
+        $task = new Task();
+        $task -> title = $request -> post("title");
+        $task -> description = $request -> post("description");
+        $task -> author_id = $request -> post("author_id");
+        $task -> state_id = $request -> post("state_id");
+        
+        $task -> save();
+
         return $task;
     }
 
-    public function store(Request $request) {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'author_id' => 'required|exists:authors,id',
-            'state_id' => 'required|exists:states,id',
-            'text_file' => 'file|mimes:txt,pdf|max:10240', 
-        ]);
+public function update(Request $request, $id){
+    $task = Task::FindOrFail($id);
+    $task -> title = $request -> post("title");
+    $task -> description = $request -> post("description");
+    $task -> author_id = $request -> post("author_id");
+    $task -> state_id = $request -> post("state_id");
     
-        $task = Task::create($request->only(['title', 'description', 'author_id', 'state_id']));
-    
-        $task->author_id = auth()->user()->id;
-        $task->save();
-        
-        return response()->json($task, 201);
-    }
+    $task -> save();
 
-    public function update(Request $request, Task $task) {
-        $task->update($request->only(['title', 'description', 'state_id']));
-        return response()->json($task, 200);
-    }
+    return $task;
+}
 
-    public function destroy(Task $task) {
-        $task->delete();
-        return response()->json(null, 204);
-    }
+
+public function destroy(Request $request, $id){
+     $task = Task::FindOrFail($id);
+    $task -> delete();
+    return [ "message" => "Deleted"];
+}
 }
