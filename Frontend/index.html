@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas</title>
+    <style>
+        /* Estilos opcionales para mejorar la presentación */
+        #tareasContainer {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        <button id="actualizarBorrar">Actualizar/Borrar</button>
+        <button id="buscar" onclick="redirigirAShow()">Buscar</button>
+        <button id="crear">Crear</button>
+    </div>
+
+    <hr>
+
+    <div id="tareasContainer"></div>
+
+    <script>
+        async function obtenerTareas() {
+            const response = await fetch('http://localhost:8000/api/tasks');
+            const data = await response.json();
+
+            const tareasContainer = document.getElementById('tareasContainer');
+            tareasContainer.innerHTML = formatearDatos(data);
+        }
+
+        function formatearDatos(data) {
+            let formattedData = '<h2>Tareas</h2>';
+            data.tasks.forEach(task => {
+                const fechaMostrar = task.updated_at ? task.updated_at : task.created_at;
+                const fechaFormateada = new Date(fechaMostrar).toLocaleString('es-ES', {
+                    day: 'numeric',
+                    month: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric'
+                });
+                formattedData += `
+                    <div>
+                        <strong>ID:</strong> ${task.id}<br>
+                        <strong>Título:</strong> ${task.title}<br>
+                        <strong>Descripción:</strong> ${task.description}<br>
+                        <strong>Autor ID:</strong> ${task.author_id}<br>
+                        <strong>Fecha:</strong> ${fechaFormateada}<br>
+                        <hr>
+                    </div>`;
+            });
+            return formattedData;
+        }
+
+        // Función para redirigir a show.html
+        function redirigirAShow() {
+            window.location.href = 'show.html';
+        }
+
+        // Llama a la función al cargar la página
+        window.onload = obtenerTareas;
+    </script>
+
+</body>
+</html>

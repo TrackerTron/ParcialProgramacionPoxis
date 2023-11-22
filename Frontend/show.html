@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostrar Tarea</title>
+    <style>
+        /* Estilos opcionales para mejorar la presentación */
+        #tareaContainer {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #botonesContainer {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenedor para los botones -->
+    <div id="botonesContainer">
+        <!-- Botones "Home", "Crear", "Actualizar/Borrar" -->
+        <button onclick="volverAIndex()">Home</button>
+        <button onclick="crearTarea()">Crear</button>
+        <button onclick="actualizarBorrarTarea()">Actualizar/Borrar</button>
+    </div>
+
+    <!-- Campo de entrada y botón para buscar por ID -->
+    <label for="idInput">Buscar Tarea por ID: </label>
+    <input type="text" id="idInput">
+    <button onclick="buscarPorId()">Buscar</button>
+
+    <!-- Contenedor para mostrar la tarea -->
+    <div id="tareaContainer"></div>
+
+    <script>
+        // Función para buscar por ID manualmente
+        function buscarPorId() {
+            const idInputValue = document.getElementById('idInput').value;
+            idInputValue ? mostrarTarea(idInputValue) : mostrarTodasLasTareas();
+        }
+
+        // Función para hacer la solicitud GET y mostrar la tarea por ID
+        async function mostrarTarea(id) {
+            try {
+                const response = await fetch(`http://localhost:8000/api/tasks/${id}`);
+                const data = await response.json();
+                const tareaContainer = document.getElementById('tareaContainer');
+                tareaContainer.innerHTML = formatearTarea(data);
+            } catch (error) {
+                mostrarError('Error al obtener la tarea:', error);
+            }
+        }
+
+        // Función para hacer la solicitud GET y mostrar todas las tareas
+        async function mostrarTodasLasTareas() {
+            try {
+                const response = await fetch('http://localhost:8000/api/tasks');
+                const data = await response.json();
+                const tareaContainer = document.getElementById('tareaContainer');
+                tareaContainer.innerHTML = data.length > 0 ? '' : '<p>No hay tareas disponibles.</p>';
+
+                data.forEach(tarea => {
+                    tareaContainer.innerHTML += formatearTarea(tarea);
+                });
+            } catch (error) {
+                mostrarError('Error al obtener todas las tareas:', error);
+            }
+        }
+
+        // Función para formatear la tarea de manera estética
+        function formatearTarea(data) {
+            if (data.id) {
+                const tarea = data;
+                const fechaMostrar = tarea.updated_at || tarea.created_at;
+                const fechaFormateada = new Date(fechaMostrar).toLocaleString('es-ES', {
+                    day: 'numeric',
+                    month: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric'
+                });
+
+                return `
+                    <h2>Tarea ${tarea.id}</h2>
+                    <div>
+                        <strong>Título:</strong> ${tarea.title}<br>
+                        <strong>Descripción:</strong> ${tarea.description}<br>
+                        <strong>Autor ID:</strong> ${tarea.author_id}<br>
+                        <strong>Estado ID:</strong> ${tarea.state_id}<br>
+                        <strong>Ruta del archivo:</strong> ${tarea.text_file_path}<br>
+                        <strong>Fecha:</strong> ${fechaFormateada}<br>
+                    </div>`;
+            } else {
+                return '<p>No se encontró la tarea.</p>';
+            }
+        }
+
+        // Función para mostrar mensajes de error
+        function mostrarError(mensaje, error) {
+            console.error(mensaje, error);
+            document.getElementById('tareaContainer').innerHTML = '<p>Error al cargar la tarea.</p>';
+        }
+
+        // Función para volver a index.html
+        function volverAIndex() {
+            window.location.href = 'index.html';
+        }
+
+        // Función para crear una nueva tarea
+        function crearTarea() {
+            // Agrega aquí la lógica para crear una nueva tarea
+            console.log('Crear nueva tarea.');
+        }
+
+        // Función para actualizar o borrar una tarea
+        function actualizarBorrarTarea() {
+            // Agrega aquí la lógica para actualizar o borrar una tarea
+            console.log('Actualizar/Borrar tarea.');
+        }
+
+        // Llama a la función al cargar la página para mostrar todas las tareas por defecto
+        window.onload = mostrarTodasLasTareas;
+    </script>
+
+</body>
+</html>
