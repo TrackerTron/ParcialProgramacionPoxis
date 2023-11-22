@@ -18,9 +18,9 @@
 <body>
 
     <div>
-        <button id="actualizarBorrar">Actualizar/Borrar</button>
+        <button id="crear" onclick="redirigirACrear()" >Crear</button>
         <button id="buscar" onclick="redirigirAShow()">Buscar</button>
-        <button id="crear">Crear</button>
+        <button id="actualizarBorrar" onclick="redirigirAUpdateAndDelete()">Actualizar/Borrar</button>
     </div>
 
     <hr>
@@ -60,12 +60,18 @@
             return formattedData;
         }
 
-        // Función para redirigir a show.html
         function redirigirAShow() {
             window.location.href = 'show.html';
         }
 
-        // Llama a la función al cargar la página
+        function redirigirAUpdateAndDelete() {
+            window.location.href = 'updateydelte.html';
+        }
+
+        function redirigirACrear() {
+            window.location.href = 'crear.html';
+        }
+
         window.onload = obtenerTareas;
     </script>
 

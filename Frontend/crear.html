@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Tarea</title>
+    <style>
+        /* Estilos opcionales para mejorar la presentación */
+        #crearContainer {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #botonesContainer {
+            margin-bottom: 20px;
+        }
+        .mensaje-exito {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenedor para los botones -->
+    <div id="botonesContainer">
+        <!-- Botones "Home", "Buscar", "Actualizar/Borrar" -->
+        <button onclick="volverAHome()">Home</button>
+        <button onclick="redirigirAShow()">Buscar</button>
+        <button onclick="redirigirAUpdateAndDelete()">Actualizar/Borrar</button>
+    </div>
+
+    <!-- División entre los botones y el panel de crear tarea -->
+    <hr>
+
+    <!-- Contenedor para crear tarea -->
+    <div id="crearContainer">
+        <h2>Crear Tarea</h2>
+        <label for="titleInput">Título:</label>
+        <input type="text" id="titleInput">
+
+        <label for="descriptionInput">Descripción:</label>
+        <textarea id="descriptionInput"></textarea>
+
+        <button onclick="crearTarea()">Crear Tarea</button>
+
+        <div id="respuestaCrear" class="mensaje-exito"></div>
+    </div>
+
+    <script>
+        // Función para volver a home.html
+        function volverAHome() {
+            window.location.href = 'home.html';
+        }
+
+        // Función para redirigir a show.html
+        function redirigirAShow() {
+            window.location.href = 'show.html';
+        }
+
+        // Función para redirigir a updateydelete.html
+        function redirigirAUpdateAndDelete() {
+            window.location.href = 'updateydelte.html';
+        }
+
+        // Función para crear una nueva tarea
+        async function crearTarea() {
+            const title = document.getElementById('titleInput').value;
+            const description = document.getElementById('descriptionInput').value;
+
+            const response = await fetch('http://localhost:8000/api/tasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "title": title,
+                    "description": description,
+                    "author_id": 1,
+                    "state_id": 1
+                })
+            });
+
+            try {
+                const data = await response.json();
+                if (data.id) {
+                    document.getElementById('respuestaCrear').innerHTML = `<p class="mensaje-exito">Tarea creada con ID: ${data.id}</p>`;
+                } else {
+                    document.getElementById('respuestaCrear').innerHTML = '<p>Error al intentar crear la tarea.</p>';
+                }
+            } catch (error) {
+                document.getElementById('respuestaCrear').innerHTML = '<p>Error al intentar crear la tarea.</p>';
+            }
+        }
+    </script>
+
+</body>
+</html>

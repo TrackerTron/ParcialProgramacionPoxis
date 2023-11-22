@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar y Borrar Tarea</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            text-align: left;
+        }
+
+        #navButtons {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        #updateSection,
+        #deleteSection {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #warningMessage {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input, button {
+            margin: 5px;
+        }
+
+        #tareaToDelete {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="navButtons">
+        <button onclick="irAIndex()">Home</button>
+        <button onclick="irAShow()">Buscar</button>
+        <button id="crear" onclick="redirigirACrear()" >Crear</button>
+    </div>
+
+    <hr>
+
+    <button onclick="mostrarSeccion('updateSection')">Actualizar Tarea</button>
+    <button onclick="mostrarSeccion('deleteSection')">Borrar Tarea</button>
+
+    <div id="updateSection">
+        <label for="updateTaskId">ID de la Tarea:</label>
+        <input type="text" id="updateTaskId" name="updateTaskId">
+        <button onclick="buscarTarea('update')">Buscar</button>
+
+        <h3>Actualizar Tarea</h3>
+        <label for="updateTitle">Nuevo Título:</label>
+        <input type="text" id="updateTitle" name="updateTitle">
+
+        <label for="updateDescription">Nueva Descripción:</label>
+        <input type="text" id="updateDescription" name="updateDescription">
+
+        <label for="updateAuthorId">Nuevo ID de Autor:</label>
+        <input type="number" id="updateAuthorId" name="updateAuthorId">
+
+        <label for="updateStateId">Nuevo ID de Estado:</label>
+        <input type="number" id="updateStateId" name="updateStateId">
+
+        <button onclick="actualizarTarea()">Actualizar</button>
+    </div>
+
+    <div id="deleteSection">
+        <label for="deleteTaskId">ID de la Tarea a Borrar:</label>
+        <input type="text" id="deleteTaskId" name="deleteTaskId">
+        <button onclick="buscarTarea('delete')">Buscar</button>
+
+        <div id="warningMessage"></div>
+
+        <div id="tareaToDelete"></div>
+
+        <button onclick="borrarTarea()">Borrar Tarea</button>
+    </div>
+
+    <script>
+        function mostrarSeccion(seccion) {
+            const updateSection = document.getElementById('updateSection');
+            const deleteSection = document.getElementById('deleteSection');
+
+            if (seccion === 'updateSection') {
+                updateSection.style.display = 'block';
+                deleteSection.style.display = 'none';
+            } else {
+                updateSection.style.display = 'none';
+                deleteSection.style.display = 'block';
+            }
+        }
+
+        function irAIndex() {
+            window.location.href = 'home.html';
+        }
+
+        function irAShow() {
+            window.location.href = 'show.html';
+        }
+
+        function redirigirACrear() {
+            window.location.href = 'crear.html';
+        }
+
+        async function buscarTarea(accion) {
+            const taskId = document.getElementById(`${accion}TaskId`).value;
+            const response = await fetch(`http://localhost:8000/api/tasks/${taskId}`);
+            const data = await response.json();
+
+            if (accion === 'update') {
+                // Mostrar datos de la tarea para actualizar
+                document.getElementById('updateTitle').value = data.title || '';
+                document.getElementById('updateDescription').value = data.description || '';
+                document.getElementById('updateAuthorId').value = data.author_id || '';
+                document.getElementById('updateStateId').value = data.state_id || '';
+            } else {
+                // Mostrar datos de la tarea para borrar
+                const tareaToDelete = document.getElementById('tareaToDelete');
+                tareaToDelete.innerHTML = formatearTarea(data);
+
+                // Mostrar mensaje de advertencia
+                const warningMessage = document.getElementById('warningMessage');
+                warningMessage.innerHTML = '¡Atención! Estás a punto de borrar la tarea.';
+            }
+        }
+
+        function formatearTarea(data) {
+            if (data.id) {
+                const tarea = data;
+                const fechaMostrar = tarea.updated_at || tarea.created_at;
+                const fechaFormateada = new Date(fechaMostrar).toLocaleString('es-ES', {
+                    day: 'numeric',
+                    month: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric'
+                });
+
+                return `
+                    <h3>Tarea ${tarea.id}</h3>
+                    <div>
+                        <strong>Título:</strong> ${tarea.title}<br>
+                        <strong>Descripción:</strong> ${tarea.description}<br>
+                        <strong>Autor ID:</strong> ${tarea.author_id}<br>
+                        <strong>Estado ID:</strong> ${tarea.state_id}<br>
+                        <strong>Ruta del archivo:</strong> ${tarea.text_file_path}<br>
+                        <strong>Fecha:</strong> ${fechaFormateada}<br>
+                    </div>`;
+            } else {
+                return '<p>No se encontró la tarea.</p>';
+            }
+        }
+
+        async function borrarTarea() {
+            const taskId = document.getElementById('deleteTaskId').value;
+            const response = await fetch(`http://localhost:8000/api/tasks/${taskId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.status === 204) {
+                alert('Tarea borrada exitosamente.');
+            } else {
+                alert('Error al intentar borrar la tarea.');
+            }
+        }
+
+        async function actualizarTarea() {
+            const taskId = document.getElementById('updateTaskId').value;
+            const title = document.getElementById('updateTitle').value;
+            const description = document.getElementById('updateDescription').value;
+            const authorId = document.getElementById('updateAuthorId').value;
+            const stateId = document.getElementById('updateStateId').value;
+
+            const response = await fetch(`http://localhost:8000/api/tasks/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "title": title,
+                    "description": description,
+                    "author_id": authorId,
+                    "state_id": stateId
+                })
+            });
+
+            if (response.status === 200) {
+                alert('Tarea actualizada exitosamente.');
+            } else {
+                alert('Error al intentar actualizar la tarea.');
+            }
+        }
+    </script>
+
+</body>
+</html>
