@@ -1,67 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>Login</title>
 </head>
 <body>
-    <form id="login-form">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+  <h1>Login</h1>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+  <input type="text" name="username" placeholder="Username">
+<input type="password" name="password" placeholder="Password">
+<button type="submit">Login</button>
 
-        <button type="submit">Login</button>
-    </form>
-
-    <script>
-        document.getElementById('login-form').addEventListener('submit', function (event) {
-    event.preventDefault();
-
-    // Obtener los valores del formulario
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
-    var clientId = 101;
-    var clientSecret = 'S8hsAsrLQtpMHfXhc565ZVBxWztZEsMsPAf5evE6';
-
-    // Realizar la solicitud Fetch
-    fetch('http://localhost:8000/oauth/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization' : 'Bearer'+'access_token'
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password,
-            grant_type : 'password',
-	        client_id : clientId,
-	        client_secret : clientSecret
-        })
-    })
-    .then(response => response.json())
-            .then(data => {
-                // Manejar la respuesta de la API
-                if (data.access_token) {
-                    // El inicio de sesión fue exitoso, y se obtuvo un token de acceso
-                    console.log('Inicio de sesión exitoso');
-                    alert('Inicio de sesión exitoso');
-                } else {
-                    // El inicio de sesión falló, muestra un mensaje de error si es necesario
-                    console.error('Error en el inicio de sesión:', data.error_description);
-                    alert('Error en el inicio de sesión: ' + data.error_description);
-                }
-            })
-    .catch(error => {
-        // Manejar errores de la solicitud
-        console.error('Error:', error);
-        alert('Error en la solicitud');
-    });
-});
-
-    </script>
+  <script src="login.js"></script>
 </body>
 </html>
