@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="login-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="c_password">Confirm Password:</label>
+        <input type="password" id="c_password" name="c_password" required>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Obtener los valores del formulario
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var password_confirmation = document.getElementById('c_password').value;
+
+            // Realizar la solicitud Fetch
+            const response = fetch('http://localhost:8000/api/v1/user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    "name": name,
+                    "email": email,
+                    "password": password,
+                    "password_confirmation": password_confirmation
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Manejar la respuesta de la API
+                console.log('Registro exitoso:', data);
+                alert('Registro exitoso');
+            })
+            .catch(error => {
+                // Manejar errores de la solicitud
+                console.error('Error:', error);
+                alert('Error en la solicitud');
+            });
+        });
+    </script>
+</body>
+</html>
