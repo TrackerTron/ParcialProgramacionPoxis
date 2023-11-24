@@ -28,7 +28,6 @@ class TaskController extends Controller {
         $task -> state_id = $request -> post("state_id");
         
         $task -> save();
-
         return $task;
     }
 
